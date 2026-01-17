@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import ScheduleAppointmentPage from "./pages/ScheduleAppointmentPage";
+import ViewCalendarPage from "./pages/ViewCalendarPage";
+import HeaderWidget from "./components/HeaderWidget";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserName = localStorage.getItem("userName");
+    if (storedUserId) {
+      setIsSignedIn(true);
+      setUserId(storedUserId);
+      setUserName(storedUserName || "");
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    setUserId("");
+    setUserName("");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+  };
+
+  const handleSignIn = (email: string, id: string, name?: string) => {
+    setIsSignedIn(true);
+    setUserId(id);
+    setUserName(name || "");
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userId", id);
+    localStorage.setItem("userName", name || "");
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-10 bg-green-900"></div>
+        <HeaderWidget 
+          isSignedIn={isSignedIn} 
+          onSignIn={handleSignIn}
+          onSignOut={handleSignOut} 
+        />
+        <main className="flex-1 overflow-auto">
+          <Routes>
+            <Route path="/" element={<HomePage isSignedIn={isSignedIn} userId={userId} userName={userName} />} />
+            <Route path="/schedule" element={<ScheduleAppointmentPage />} />
+            <Route path="/calendar" element={<ViewCalendarPage />} />
+          </Routes>
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

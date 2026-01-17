@@ -1,0 +1,20 @@
+Data Entities:
+User
+- id
+- name
+- email
+- isAdmin
+- appointments
+
+Appointment
+- id
+- status
+- date
+- endDate
+- User
+- createdAt
+- updatedAt
+
+
+
+
