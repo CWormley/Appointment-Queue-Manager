@@ -42,7 +42,10 @@ export class AppointmentsService {
     // This is intentionally missing for debugging practice
 
     const appointment = this.appointmentsRepository.create({
-      ...createAppointmentDTO,
+      title: createAppointmentDTO.title,
+      description: createAppointmentDTO.description,
+      date: startTime,
+      endDate: endTime,
       user,
     });
 
@@ -100,6 +103,51 @@ export class AppointmentsService {
       relations: ['user'],
       order: { date: 'ASC' },
     });
+  }
+
+  /**
+   * Get available time slots for a given date
+   * Accounts for both start and end times of scheduled appointments
+   */
+  async getAvailableTimeSlots(date: string): Promise<string[]> {
+    const openingHour = 9;
+    const closingHour = 17;
+    const slotDurationMinutes = 60; // 1 hour slots
+    
+    // Parse the date string properly (expected format: YYYY-MM-DD)
+    const startOfDay = new Date(`${date}T00:00:00.000Z`); 
+    const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+    // Get all appointments for the day
+    const appointments = await this.appointmentsRepository.find({
+      where: {
+        date: Between(startOfDay, endOfDay),
+      },
+    });
+
+    const availableSlots: string[] = [];
+
+    // Generate all possible slots and check for conflicts
+    for (let hour = openingHour; hour < closingHour; hour++) {
+      const slotStartTime = new Date(`${date}T${hour.toString().padStart(2, '0')}:00:00.000Z`);
+      const slotEndTime = new Date(slotStartTime.getTime() + slotDurationMinutes * 60 * 1000);
+
+      // Check if this slot overlaps with any appointment
+      const isBooked = appointments.some(apt => {
+        const aptStart = new Date(apt.date);
+        const aptEnd = new Date(apt.endDate);
+        
+        // Slot overlaps if: appointment ends after slot starts AND appointment starts before slot ends
+        return aptEnd > slotStartTime && aptStart < slotEndTime;
+      });
+
+      if (!isBooked) {
+        // Return time in HH:MM format instead of ISO string
+        availableSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+      }
+    }
+
+    return availableSlots;
   }
 
   /**

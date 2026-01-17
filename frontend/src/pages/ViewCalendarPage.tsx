@@ -4,9 +4,10 @@ import { appointmentAPI } from "../services/api";
 
 interface Appointment {
   id: string;
-  startTime: string;
-  endTime: string;
-  description: string;
+  title: string;
+  description: string | null;
+  date: string;
+  endDate: string;
   status: string;
 }
 
@@ -49,7 +50,7 @@ function ViewCalendarPage() {
 
   const getAppointmentsForDate = (dateStr: string) => {
     return appointments.filter((apt) => {
-      const aptDate = new Date(apt.startTime).toLocaleDateString();
+      const aptDate = new Date(apt.date).toLocaleDateString();
       return aptDate === new Date(dateStr).toLocaleDateString();
     });
   };
@@ -63,7 +64,7 @@ function ViewCalendarPage() {
   };
 
   const handleSelectDate = (day: number) => {
-    const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+    const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day+1)
       .toISOString()
       .split("T")[0];
     setSelectedDate(dateStr);
@@ -139,7 +140,7 @@ function ViewCalendarPage() {
               <div className="grid grid-cols-7 gap-2">
                 {calendarDays.map((day, index) => {
                   const dateStr = day
-                    ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+                    ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day+1)
                         .toISOString()
                         .split("T")[0]
                     : null;
@@ -161,13 +162,13 @@ function ViewCalendarPage() {
                       }`}
                     >
                       {day && (
-                        <div>
-                          <div className="font-semibold text-gray-900">{day}</div>
+                        <div className="relative w-full h-full flex items-center justify-center">
                           {dayAppointments.length > 0 && (
-                            <div className="text-xs text-emerald-700 font-medium mt-1">
-                              {dayAppointments.length} apt
+                            <div className="absolute top-1 left-1">
+                              <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
                             </div>
                           )}
+                          <div className="font-semibold text-gray-900">{day}</div>
                         </div>
                       )}
                     </button>
@@ -198,14 +199,17 @@ function ViewCalendarPage() {
                 <div className="space-y-4">
                   {selectedAppointments.map((apt) => (
                     <div key={apt.id} className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                      <p className="font-semibold text-gray-900 mb-1">{apt.description}</p>
+                      <p className="font-semibold text-gray-900 mb-1">{apt.title}</p>
+                      {apt.description && (
+                        <p className="text-sm text-gray-600 mb-2">{apt.description}</p>
+                      )}
                       <p className="text-sm text-gray-600 mb-2">
-                        {new Date(apt.startTime).toLocaleTimeString([], {
+                        {new Date(apt.date).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}{" "}
                         -{" "}
-                        {new Date(apt.endTime).toLocaleTimeString([], {
+                        {new Date(apt.endDate).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}

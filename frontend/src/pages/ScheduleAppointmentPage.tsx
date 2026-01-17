@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { appointmentAPI } from "../services/api";
+import DatePicker from "../components/DatePicker";
 
 function ScheduleAppointmentPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   const userId = localStorage.getItem("userId");
 
@@ -14,17 +17,102 @@ function ScheduleAppointmentPage() {
     description: "",
     startDate: "",
     startTime: "",
-    endDate: "",
     endTime: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
+
+  // Fetch available slots when date changes
+  useEffect(() => {
+    const fetchAvailableSlots = async () => {
+      if (!formData.startDate) {
+        setAvailableSlots([]);
+        return;
+      }
+
+      setLoadingSlots(true);
+      try {
+        const slots = await appointmentAPI.getAvailableSlots(formData.startDate);
+        setAvailableSlots(slots);
+      } catch (err) {
+        console.error("Failed to fetch available slots:", err);
+        setAvailableSlots([]);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    fetchAvailableSlots();
+    // Reset start time when date changes
+    setFormData((prev) => ({ ...prev, startTime: "", endTime: "" }));
+  }, [formData.startDate]);
+
+  // Reset end time when start time changes
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, endTime: "" }));
+  }, [formData.startTime]);
+
+  // Calculate valid end times based on start time and available slots
+  const getValidEndTimes = (): string[] => {
+    if (!formData.startTime || availableSlots.length === 0) {
+      return [];
+    }
+
+    const startIndex = availableSlots.indexOf(formData.startTime);
+    if (startIndex === -1) {
+      return [];
+    }
+
+    const validEndTimes: string[] = [];
+    
+    // Convert time strings to minutes for easier comparison
+    const timeToMinutes = (time: string): number => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes;
+    };
+
+    // Convert minutes back to time string
+    const minutesToTime = (minutes: number): string => {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    };
+
+    const startMinutes = timeToMinutes(formData.startTime);
+    let lastConsecutiveSlot = formData.startTime;
+
+    // Check each subsequent slot
+    for (let i = startIndex + 1; i < availableSlots.length; i++) {
+      const currentSlotMinutes = timeToMinutes(availableSlots[i]);
+      const previousSlotMinutes = timeToMinutes(availableSlots[i - 1]);
+
+      // Check if there's a gap (more than 60 minutes between slots)
+      if (currentSlotMinutes - previousSlotMinutes > 60) {
+        // Stop at the first gap
+        break;
+      }
+
+      validEndTimes.push(availableSlots[i]);
+      lastConsecutiveSlot = availableSlots[i];
+    }
+
+    // Add one more hour after the last consecutive available slot
+    if (lastConsecutiveSlot) {
+      const lastSlotMinutes = timeToMinutes(lastConsecutiveSlot);
+      const nextHourTime = minutesToTime(lastSlotMinutes + 60);
+      validEndTimes.push(nextHourTime);
+    }
+
+    return validEndTimes;
+  };
+
+  const validEndTimes = getValidEndTimes();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +131,8 @@ function ScheduleAppointmentPage() {
       }
 
       const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
-      const endDateTime = formData.endDate && formData.endTime 
-        ? new Date(`${formData.endDate}T${formData.endTime}`)
+      const endDateTime = formData.endTime 
+        ? new Date(`${formData.startDate}T${formData.endTime}`)
         : new Date(startDateTime.getTime() + 60 * 60 * 1000); // Default 1 hour duration
 
       if (endDateTime <= startDateTime) {
@@ -64,7 +152,6 @@ function ScheduleAppointmentPage() {
         description: "",
         startDate: "",
         startTime: "",
-        endDate: "",
         endTime: "",
       });
 
@@ -112,8 +199,8 @@ function ScheduleAppointmentPage() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="e.g., Doctor's appointment, Team meeting, etc."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                rows={3}
+                className="w-full px-4 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                rows={1}
               />
             </div>
 
@@ -121,26 +208,13 @@ function ScheduleAppointmentPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Start Date <span className="text-red-500">*</span>
+                  Appointment Date <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="date"
-                  name="startDate"
+                <DatePicker
                   value={formData.startDate}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Start Time <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="time"
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  onChange={(date) => setFormData((prev) => ({ ...prev, startDate: date }))}
+                  placeholder="Select appointment date"
+                  required
                 />
               </div>
             </div>
@@ -148,28 +222,68 @@ function ScheduleAppointmentPage() {
             {/* End Date and Time */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  End Date <span className="text-gray-500 text-xs">(Optional)</span>
+                <label className={`block text-sm font-semibold mb-2 ${!formData.startDate ? 'text-gray-400' : 'text-gray-900'}`}>
+                  Start Time <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="date"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
+                {loadingSlots ? (
+                  <div className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-lg text-gray-500 text-sm">
+                    Loading available slots...
+                  </div>
+                ) : (
+                  <select
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                    disabled={!formData.startDate || availableSlots.length === 0}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition ${
+                      !formData.startDate || availableSlots.length === 0
+                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'border-gray-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent'
+                    }`}
+                  >
+                    <option value="">
+                      {!formData.startDate
+                        ? "Select a date first"
+                        : availableSlots.length === 0
+                        ? "No available slots"
+                        : "Select a time slot"}
+                    </option>
+                    {availableSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${!formData.startTime ? 'text-gray-400' : 'text-gray-900'}`}>
                   End Time <span className="text-gray-500 text-xs">(Optional)</span>
                 </label>
-                <input
-                  type="time"
+                <select
                   name="endTime"
                   value={formData.endTime}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
+                  disabled={!formData.startTime || validEndTimes.length === 0}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition ${
+                    !formData.startTime || validEndTimes.length === 0
+                      ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'border-gray-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent'
+                  }`}
+                >
+                  <option value="">
+                    {!formData.startTime
+                      ? "Select start time first"
+                      : validEndTimes.length === 0
+                      ? "No available end times"
+                      : "Select end time (default +1hr)"}
+                  </option>
+                  {validEndTimes.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

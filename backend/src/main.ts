@@ -6,12 +6,12 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: 'http://localhost:5173', // Vite default port
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
 
   await app.listen(process.env.PORT ?? 3000);
-  console.log('Application is running on: http://localhost:3000');
+  console.log('Application is running on: ' + (await app.getUrl()));
 
 }
 bootstrap();

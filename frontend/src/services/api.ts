@@ -39,7 +39,7 @@ export const appointmentAPI = {
     const response = await fetch(`${API_BASE_URL}/appointments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, startTime, endTime, description }),
+      body: JSON.stringify({ userId, startTime, endTime, title: description }),
     });
     if (!response.ok) throw new Error('Failed to create appointment');
     return response.json();
@@ -51,9 +51,16 @@ export const appointmentAPI = {
     return response.json();
   },
 
+  async getAvailableSlots(date: string) {
+    const response = await fetch(`${API_BASE_URL}/appointments/available-time-slots?date=${date}`);
+    if (!response.ok) throw new Error('Failed to fetch available slots');
+    return response.json();
+  },
+
   async getByUserId(userId: string) {
-    const appointments = await this.getAll();
-    return appointments.filter((apt: any) => apt.userId === userId);
+    const response = await fetch(`${API_BASE_URL}/appointments/user/${userId}`);
+    if (!response.ok) throw new Error('Failed to fetch appointments for user');
+    return response.json(); 
   },
 
   async update(id: string, updates: any) {

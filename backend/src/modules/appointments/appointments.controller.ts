@@ -54,6 +54,11 @@ export class AppointmentsController {
     return await this.appointmentsService.getLoadByDate(startDate, endDate);
   }
 
+  @Get('available-time-slots')
+  async getAvailableTimeSlots(@Query('date') date: string) {
+    return await this.appointmentsService.getAvailableTimeSlots(date);
+  }
+
   /**
    * GET /appointments/user/:userId
    * Get all appointments for a specific user
