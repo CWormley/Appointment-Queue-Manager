@@ -5,10 +5,18 @@ interface HomePageProps {
   isSignedIn: boolean;
   userId: string;
   userName: string;
+  onTriggerSignIn: () => void;
 }
 
-function HomePage({ isSignedIn, userId, userName }: HomePageProps) {
+function HomePage({ isSignedIn, userId, userName, onTriggerSignIn }: HomePageProps) {
   const navigate = useNavigate();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (!isSignedIn && !userId) {
+      onTriggerSignIn();
+    }
+  };
 
   return (
     <div className="w-full h-full flex flex-col bg-gray-50">
@@ -69,13 +77,13 @@ function HomePage({ isSignedIn, userId, userName }: HomePageProps) {
             <p className="text-lg text-gray-600 mb-12">Join thousands of users managing appointments better</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => navigate("/schedule")}
+                onClick={() => handleNavigation("/schedule")}
                 className="px-8 py-3 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition font-semibold"
               >
                 Schedule an Appointment
               </button>
               <button
-                onClick={() => navigate("/calendar")}
+                onClick={() => handleNavigation("/calendar")}
                 className="px-8 py-3 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition font-semibold border border-emerald-300"
               >
                 View Calendar

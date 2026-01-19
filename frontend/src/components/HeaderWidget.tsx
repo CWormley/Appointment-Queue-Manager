@@ -6,10 +6,22 @@ interface HeaderWidgetProps {
   isSignedIn?: boolean;
   onSignIn?: (email: string, id: string, name?: string) => void;
   onSignOut?: () => void;
+  triggerSignIn?: boolean;
+  onSignInHandled?: () => void;
 }
 
-const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignIn, onSignOut }) => {
+const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignIn, onSignOut, triggerSignIn = false, onSignInHandled }) => {
   const [showSignInModal, setShowSignInModal] = useState(false);
+
+  // Open modal when triggerSignIn becomes true
+  React.useEffect(() => {
+    if (triggerSignIn) {
+      setShowSignInModal(true);
+      if (onSignInHandled) {
+        onSignInHandled();
+      }
+    }
+  }, [triggerSignIn, onSignInHandled]);
 
   const handleSignIn = (email: string, id: string, name?: string) => {
     setShowSignInModal(false);

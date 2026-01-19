@@ -38,8 +38,20 @@ export class AppointmentsService {
       throw new NotFoundException(`User with ID ${createAppointmentDTO.userId} not found`);
     }
 
-    // TODO: Bug #3 - Check for overlapping appointments to prevent double-booking
-    // This is intentionally missing for debugging practice
+    // Check for overlapping appointments (unless admin explicitly allows overlap)
+    if (!createAppointmentDTO.allowOverlap) {
+      const overlappingAppointments = await this.appointmentsRepository
+        .createQueryBuilder('appointment')
+        .where('appointment.date < :endTime', { endTime })
+        .andWhere('appointment.endDate > :startTime', { startTime })
+        .getMany();
+
+      if (overlappingAppointments.length > 0) {
+        throw new ConflictException(
+          'This time slot overlaps with an existing appointment. Please choose a different time.'
+        );
+      }
+    }
 
     const appointment = this.appointmentsRepository.create({
       title: createAppointmentDTO.title,
@@ -114,24 +126,28 @@ export class AppointmentsService {
     const closingHour = 17;
     const slotDurationMinutes = 60; // 1 hour slots
     
-    // Parse the date string properly (expected format: YYYY-MM-DD)
-    const startOfDay = new Date(`${date}T00:00:00.000Z`); 
-    const endOfDay = new Date(`${date}T23:59:59.999Z`);
+    // Parse the date string as local time (expected format: YYYY-MM-DD)
+    const [year, month, day] = date.split('-').map(Number);
+    
+    // Create start and end of day in local time, then convert to UTC for DB query
+    const startOfDayLocal = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDayLocal = new Date(year, month - 1, day, 23, 59, 59, 999);
 
     // Get all appointments for the day
     const appointments = await this.appointmentsRepository.find({
       where: {
-        date: Between(startOfDay, endOfDay),
+        date: Between(startOfDayLocal, endOfDayLocal),
       },
     });
 
     const availableSlots: string[] = [];
 
-    // Generate all possible slots and check for conflicts
+    // Generate all possible slots in local time
     for (let hour = openingHour; hour < closingHour; hour++) {
-      const slotStartTime = new Date(`${date}T${hour.toString().padStart(2, '0')}:00:00.000Z`);
+      // Create slot times in local timezone
+      const slotStartTime = new Date(year, month - 1, day, hour, 0, 0, 0);
       const slotEndTime = new Date(slotStartTime.getTime() + slotDurationMinutes * 60 * 1000);
-
+      
       // Check if this slot overlaps with any appointment
       const isBooked = appointments.some(apt => {
         const aptStart = new Date(apt.date);

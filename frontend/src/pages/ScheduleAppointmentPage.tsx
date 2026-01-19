@@ -84,7 +84,6 @@ function ScheduleAppointmentPage() {
       return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     };
 
-    const startMinutes = timeToMinutes(formData.startTime);
     let lastConsecutiveSlot = formData.startTime;
 
     // Check each subsequent slot
@@ -204,7 +203,7 @@ function ScheduleAppointmentPage() {
               />
             </div>
 
-            {/* Start Date and Time */}
+            {/* Start Date */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -219,7 +218,7 @@ function ScheduleAppointmentPage() {
               </div>
             </div>
 
-            {/* End Date and Time */}
+            {/* Start and End Time */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={`block text-sm font-semibold mb-2 ${!formData.startDate ? 'text-gray-400' : 'text-gray-900'}`}>

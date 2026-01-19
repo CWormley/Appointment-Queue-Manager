@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional, IsDateString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsDateString, IsUUID, IsBoolean } from 'class-validator';
 
 export class CreateAppointmentDTO {
   @IsString()
@@ -20,4 +20,8 @@ export class CreateAppointmentDTO {
   @IsUUID()
   @IsNotEmpty({ message: 'User ID is required' })
   userId: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowOverlap?: boolean; // Admin override to allow overlapping appointments
 }

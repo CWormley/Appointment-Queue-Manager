@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { appointmentAPI } from "../services/api";
 
@@ -18,7 +18,8 @@ function ViewCalendarPage() {
   const [error, setError] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -31,7 +32,9 @@ function ViewCalendarPage() {
         const data = await appointmentAPI.getByUserId(userId);
         setAppointments(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load appointments");
+        setError(
+          err instanceof Error ? err.message : "Failed to load appointments"
+        );
       } finally {
         setLoading(false);
       }
@@ -39,6 +42,16 @@ function ViewCalendarPage() {
 
     fetchAppointments();
   }, [userId]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -56,15 +69,40 @@ function ViewCalendarPage() {
   };
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)
+    );
+  };
+
+  const deleteAppointment = async (appointmentId: string) => {
+    try {
+      await appointmentAPI.delete(appointmentId);
+      setAppointments((prev) =>
+        prev.filter((apt) => apt.id !== appointmentId)
+      );
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error("Failed to delete appointment:", err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while deleting the appointment"
+      );
+    }
   };
 
   const handleSelectDate = (day: number) => {
-    const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day+1)
+    const dateStr = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day + 1
+    )
       .toISOString()
       .split("T")[0];
     setSelectedDate(dateStr);
@@ -77,7 +115,9 @@ function ViewCalendarPage() {
     year: "numeric",
   });
 
-  const selectedAppointments = selectedDate ? getAppointmentsForDate(selectedDate) : [];
+  const selectedAppointments = selectedDate
+    ? getAppointmentsForDate(selectedDate)
+    : [];
 
   const calendarDays: (number | null)[] = [];
   for (let i = 0; i < firstDay; i++) {
@@ -92,8 +132,12 @@ function ViewCalendarPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Your Appointment Calendar</h1>
-          <p className="text-gray-600">View and manage all your scheduled appointments</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Your Appointment Calendar
+          </h1>
+          <p className="text-gray-600">
+            View and manage all your scheduled appointments
+          </p>
         </div>
 
         {error && (
@@ -118,7 +162,9 @@ function ViewCalendarPage() {
                 >
                   ← Prev
                 </button>
-                <h2 className="text-2xl font-bold text-gray-900">{monthName}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {monthName}
+                </h2>
                 <button
                   onClick={handleNextMonth}
                   className="px-4 py-2 text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
@@ -129,22 +175,33 @@ function ViewCalendarPage() {
 
               {/* Day Headers */}
               <div className="grid grid-cols-7 gap-2 mb-4">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <div key={day} className="text-center font-semibold text-gray-600 py-2">
-                    {day}
-                  </div>
-                ))}
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                  (day) => (
+                    <div
+                      key={day}
+                      className="text-center font-semibold text-gray-600 py-2"
+                    >
+                      {day}
+                    </div>
+                  )
+                )}
               </div>
 
               {/* Calendar Grid */}
               <div className="grid grid-cols-7 gap-2">
                 {calendarDays.map((day, index) => {
                   const dateStr = day
-                    ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day+1)
+                    ? new Date(
+                        currentDate.getFullYear(),
+                        currentDate.getMonth(),
+                        day + 1
+                      )
                         .toISOString()
                         .split("T")[0]
                     : null;
-                  const dayAppointments = dateStr ? getAppointmentsForDate(dateStr) : [];
+                  const dayAppointments = dateStr
+                    ? getAppointmentsForDate(dateStr)
+                    : [];
                   const isSelected = selectedDate === dateStr;
 
                   return (
@@ -168,7 +225,9 @@ function ViewCalendarPage() {
                               <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
                             </div>
                           )}
-                          <div className="font-semibold text-gray-900">{day}</div>
+                          <div className="font-semibold text-gray-900">
+                            {day}
+                          </div>
                         </div>
                       )}
                     </button>
@@ -198,10 +257,46 @@ function ViewCalendarPage() {
               {selectedDate && selectedAppointments.length > 0 ? (
                 <div className="space-y-4">
                   {selectedAppointments.map((apt) => (
-                    <div key={apt.id} className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-                      <p className="font-semibold text-gray-900 mb-1">{apt.title}</p>
+                    <div
+                      key={apt.id}
+                      className="relative p-4 bg-emerald-50 border border-emerald-200 rounded-lg"
+                    >
+                      {/* 3-dot button */}
+                      <button
+                        className="absolute top-2 right-2
+                       text-black font-extrabold 
+                       bg-transparent hover:bg-emerald-100 
+                        focus:outline-none focus:ring-0
+                       rounded-full p-0.5 w-8"
+                        aria-label="More Options"
+                        onClick={() => setOpenMenuId(openMenuId === apt.id ? null : apt.id)}
+                      >
+                        ⋮
+                      </button>
+                      {/* Popup menu */}
+                      {openMenuId === apt.id && (
+                        <div
+                          ref={menuRef}
+                          className="absolute top-8 -right-24 w-32 rounded-md border bg-white shadow-lg z-50"
+                        >
+                          <button
+                            onClick={() => {
+                              setOpenMenuId(null);
+                              deleteAppointment(apt.id);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-md"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                      <p className="font-semibold text-gray-900 mb-1">
+                        {apt.title}
+                      </p>
                       {apt.description && (
-                        <p className="text-sm text-gray-600 mb-2">{apt.description}</p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {apt.description}
+                        </p>
                       )}
                       <p className="text-sm text-gray-600 mb-2">
                         {new Date(apt.date).toLocaleTimeString([], {
@@ -222,7 +317,9 @@ function ViewCalendarPage() {
                 </div>
               ) : selectedDate ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">No appointments scheduled for this date</p>
+                  <p className="text-gray-500 mb-4">
+                    No appointments scheduled for this date
+                  </p>
                   <button
                     onClick={() => navigate("/schedule")}
                     className="w-full px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition font-semibold"
@@ -232,7 +329,9 @@ function ViewCalendarPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">Select a date to view appointments</p>
+                  <p className="text-gray-500">
+                    Select a date to view appointments
+                  </p>
                 </div>
               )}
 

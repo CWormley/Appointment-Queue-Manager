@@ -9,6 +9,7 @@ function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
+  const [triggerSignIn, setTriggerSignIn] = useState(false);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -45,11 +46,13 @@ function App() {
         <HeaderWidget 
           isSignedIn={isSignedIn} 
           onSignIn={handleSignIn}
-          onSignOut={handleSignOut} 
+          onSignOut={handleSignOut}
+          triggerSignIn={triggerSignIn}
+          onSignInHandled={() => setTriggerSignIn(false)}
         />
         <main className="flex-1 overflow-auto">
           <Routes>
-            <Route path="/" element={<HomePage isSignedIn={isSignedIn} userId={userId} userName={userName} />} />
+            <Route path="/" element={<HomePage isSignedIn={isSignedIn} userId={userId} userName={userName} onTriggerSignIn={() => setTriggerSignIn(true)} />} />
             <Route path="/schedule" element={<ScheduleAppointmentPage />} />
             <Route path="/calendar" element={<ViewCalendarPage />} />
           </Routes>
