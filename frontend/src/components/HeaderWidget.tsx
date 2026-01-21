@@ -1,3 +1,14 @@
+/**
+ * Header Widget
+ * 
+ * @description
+ * Display navigation and option for sign-in sign-out functionality
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SignInModal from "./SignInModal";

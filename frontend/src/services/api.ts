@@ -1,3 +1,14 @@
+/**
+ * API
+ * 
+ * @description
+ * Handle frontend calls to backend apis.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 // User API

@@ -1,3 +1,14 @@
+/**
+ *  SignIn Modal
+ * 
+ * @description
+ * Pop-up display for sign-in, sign-up. Handles user auth controll and user data storage.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useState } from "react";
 import { userAPI } from "../services/api";
 

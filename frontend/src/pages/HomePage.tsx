@@ -1,3 +1,14 @@
+/**
+ * Home Page
+ * 
+ * @description
+ * Landing page, handling user auth and displaying contents for unauthorized users.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useNavigate } from "react-router-dom";
 import Dashboard from "../components/DashboardProp";
 

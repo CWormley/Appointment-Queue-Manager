@@ -1,3 +1,15 @@
+/**
+ * Schedule Appointment Page
+ * 
+ * @description
+ * Form page for creating new appointment. 
+ * Form fields are limited to available times and dates.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { appointmentAPI } from "../services/api";

@@ -1,3 +1,15 @@
+/**
+ * Date Picker
+ * 
+ * @description
+ * Pop-up calendar for selecting date in form field. 
+ * Allows for navigation month by month as well as drop down month and year selection.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useState, useRef, useEffect } from "react";
 
 interface DatePickerProps {

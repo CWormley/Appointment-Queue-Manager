@@ -1,3 +1,14 @@
+/**
+ * Calendar Page
+ * 
+ * @description
+ * View calendar of scheduled appointments, option to manage and delete appointments.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { appointmentAPI } from "../services/api";
