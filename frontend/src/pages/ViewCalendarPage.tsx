@@ -1,8 +1,10 @@
 /**
- * Calendar Page
+ * ViewCalendarPage
  * 
  * @description
- * View calendar of scheduled appointments, option to manage and delete appointments.
+ * Interactive calendar view displaying user appointments with month navigation.
+ * Shows appointment indicators on calendar dates and detailed appointment list
+ * for selected dates. Includes appointment management options (view details, delete).
  * 
  * @author Claudia Wormley
  * @version 1.0.0

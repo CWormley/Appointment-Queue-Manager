@@ -1,8 +1,10 @@
 /**
- * Header Widget
+ * HeaderWidget Component
  * 
  * @description
- * Display navigation and option for sign-in sign-out functionality
+ * Main navigation header with responsive menu and authentication controls.
+ * Displays site logo, navigation links, and sign-in/sign-out buttons.
+ * Manages sign-in modal trigger state for seamless authentication flow.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

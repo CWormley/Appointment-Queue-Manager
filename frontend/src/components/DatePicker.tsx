@@ -1,9 +1,10 @@
 /**
- * Date Picker
+ * DatePicker Component
  * 
  * @description
- * Pop-up calendar for selecting date in form field. 
- * Allows for navigation month by month as well as drop down month and year selection.
+ * Custom calendar widget for date selection in appointment forms.
+ * Features include month/year navigation via arrows or dropdowns,
+ * automatic disabling of past dates and weekends, and local timezone support.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

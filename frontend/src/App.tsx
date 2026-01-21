@@ -1,3 +1,15 @@
+/**
+ * App
+ * 
+ * @description
+ * Root application component. Manages global authentication state,
+ * routing configuration, and layout structure for the appointment manager.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";

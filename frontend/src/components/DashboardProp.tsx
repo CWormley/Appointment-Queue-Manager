@@ -1,9 +1,10 @@
 /**
- * Dashboard Prop
+ * Dashboard Component
  * 
  * @description
- * Display dashboard for signed in users.
- * Includes naviagtaion for creating and viewing appointments.
+ * Authenticated user dashboard displaying personalized appointment summary,
+ * quick statistics, and navigation shortcuts for scheduling and viewing
+ * appointments. Shows user greeting and upcoming appointment count.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

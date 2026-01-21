@@ -1,8 +1,10 @@
 /**
- *  SignIn Modal
+ * SignInModal Component
  * 
  * @description
- * Pop-up display for sign-in, sign-up. Handles user auth controll and user data storage.
+ * Authentication modal with sign-in and sign-up functionality.
+ * Handles user authentication, account creation, and local storage
+ * of user session data. Provides seamless switching between modes.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

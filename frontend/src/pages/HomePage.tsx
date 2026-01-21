@@ -1,8 +1,10 @@
 /**
- * Home Page
+ * HomePage
  * 
  * @description
- * Landing page, handling user auth and displaying contents for unauthorized users.
+ * Application landing page with conditional rendering based on authentication state.
+ * Displays marketing content and feature highlights for unauthenticated users,
+ * or redirects authenticated users to their personalized dashboard.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

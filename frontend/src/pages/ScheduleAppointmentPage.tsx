@@ -1,9 +1,11 @@
 /**
- * Schedule Appointment Page
+ * ScheduleAppointmentPage
  * 
  * @description
- * Form page for creating new appointment. 
- * Form fields are limited to available times and dates.
+ * Appointment creation form with smart time slot selection.
+ * Dynamically fetches available time slots from the API based on selected date,
+ * prevents scheduling conflicts, and enforces business rules (no weekends/past dates).
+ * Supports consecutive time slot selection for multi-hour appointments.
  * 
  * @author Claudia Wormley
  * @version 1.0.0

@@ -1,8 +1,10 @@
 /**
- * API
+ * API Service
  * 
  * @description
- * Handle frontend calls to backend apis.
+ * Centralized API client for all backend communication. Provides methods
+ * for user management and appointment operations including CRUD operations,
+ * availability checks, and time slot queries.
  * 
  * @author Claudia Wormley
  * @version 1.0.0
