@@ -1,3 +1,14 @@
+/**
+ * Create Appointment DTO
+ * 
+ * @description
+ * Data Transfer Object for creating a new appointment.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { IsNotEmpty, IsString, IsOptional, IsDateString, IsUUID, IsBoolean } from 'class-validator';
 
 export class CreateAppointmentDTO {

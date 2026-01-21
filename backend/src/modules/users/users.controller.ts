@@ -1,3 +1,16 @@
+/**
+ * Users Controller
+ * 
+ * @description
+ * Handles HTTP requests related to users.
+ * Provides endpoints for creating, retrieving, updating, and deleting users.
+ * Utilizes UsersService for business logic.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import {
   Controller,
   Get,

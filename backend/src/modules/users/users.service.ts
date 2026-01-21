@@ -1,3 +1,15 @@
+/**
+ * Users Service
+ * 
+ * @description
+ * Handles services related to users.
+ * Provides functions for creating, retrieving, updating, and deleting users.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

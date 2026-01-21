@@ -1,3 +1,15 @@
+/**
+ * Appointments Service
+ * 
+ * @description
+ * Handles services related to appointments.
+ * Provides functions for creating, retrieving, updating, and deleting appointments.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
@@ -18,7 +30,7 @@ export class AppointmentsService {
    * Create a new appointment
    * @throws NotFoundException if user doesn't exist
    * @throws BadRequestException if end time is before start time
-   * @throws ConflictException if time slot overlaps with existing appointment (Bug #3)
+   * @throws ConflictException if time slot overlaps with existing appointment
    */
   async create(createAppointmentDTO: CreateAppointmentDTO): Promise<Appointment> {
     // Validate times
@@ -75,7 +87,6 @@ export class AppointmentsService {
 
   /**
    * Get appointments by date
-   * TODO: Bug #2 - Cache results in Redis
    */
   async findByDate(date: string): Promise<Appointment[]> {
     const startOfDay = new Date(`${date}T00:00:00Z`);
@@ -168,7 +179,6 @@ export class AppointmentsService {
 
   /**
    * Update appointment
-   * TODO: Bug #2 - Invalidate cache on update
    */
   async update(id: string, updateAppointmentDTO: UpdateAppointmentDTO): Promise<Appointment> {
     const appointment = await this.findOne(id);
@@ -207,7 +217,6 @@ export class AppointmentsService {
 
   /**
    * Delete appointment
-   * TODO: Bug #2 - Invalidate cache on delete
    */
   async remove(id: string): Promise<Appointment> {
     const appointment = await this.findOne(id);

@@ -1,3 +1,16 @@
+/**
+ * Appointments Controller
+ * 
+ * @description
+ * Handles HTTP requests related to appointments.
+ * Provides endpoints for creating, retrieving, updating, and deleting appointments.
+ * Utilizes AppointmentsService for business logic.
+ * 
+ * @author Claudia Wormley
+ * @version 1.0.0
+ * @since 2026-01-20
+ *
+ */
 import {
   Controller,
   Get,
