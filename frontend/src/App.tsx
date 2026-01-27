@@ -16,6 +16,7 @@ import HomePage from "./pages/HomePage";
 import ScheduleAppointmentPage from "./pages/ScheduleAppointmentPage";
 import ViewCalendarPage from "./pages/ViewCalendarPage";
 import HeaderWidget from "./components/HeaderWidget";
+import AdvocatePage from "./pages/AdvocatePage";
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -67,6 +68,7 @@ function App() {
             <Route path="/" element={<HomePage isSignedIn={isSignedIn} userId={userId} userName={userName} onTriggerSignIn={() => setTriggerSignIn(true)} />} />
             <Route path="/schedule" element={<ScheduleAppointmentPage />} />
             <Route path="/calendar" element={<ViewCalendarPage />} />
+            <Route path="/advocates" element={<AdvocatePage />} />
           </Routes>
         </main>
       </div>

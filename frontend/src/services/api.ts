@@ -13,6 +13,15 @@
  */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
+// Advocate API
+export const advocateAPI = {
+  async getAll(page: number, pageSize: number) {
+    const response = await fetch(`${API_BASE_URL}/advocates?page=${page}&limit=${pageSize}`);
+    if (!response.ok) throw new Error('Failed to fetch advocates');
+    return response.json();
+  }
+};
+
 // User API
 export const userAPI = {
   async create(email: string, name: string) {

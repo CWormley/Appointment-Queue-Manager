@@ -227,7 +227,6 @@ function ScheduleAppointmentPage() {
                   value={formData.startDate}
                   onChange={(date) => setFormData((prev) => ({ ...prev, startDate: date }))}
                   placeholder="Select appointment date"
-                  required
                 />
               </div>
             </div>

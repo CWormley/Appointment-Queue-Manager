@@ -109,6 +109,19 @@ function Dashboard({ userName, userId }: DashboardProps) {
             →
           </span>
         </Link>
+        <Link
+          to="/advocates"
+          className="group flex items-center justify-between rounded-2xl border border-slate-300 bg-white px-8 py-6 transition hover:border-slate-400"
+        >
+          <h2 className="font-serifDisplay text-2xl text-slate-900">
+            Find{" "}
+            <span className="text-amber-600 font-medium">advocates</span>
+          </h2>
+
+          <span className="text-emerald-700 text-xl transition group-hover:translate-x-1">
+            →
+          </span>
+        </Link>
       </div>
     </div>
   );

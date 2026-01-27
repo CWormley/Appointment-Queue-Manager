@@ -13,8 +13,10 @@
  */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { FaUserCircle } from "react-icons/fa";
 import SignInModal from "./SignInModal";
-
+import ProfilePopup from "./ProfilePopup";
 interface HeaderWidgetProps {
   isSignedIn?: boolean;
   onSignIn?: (email: string, id: string, name?: string) => void;
@@ -24,7 +26,11 @@ interface HeaderWidgetProps {
 }
 
 const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignIn, onSignOut, triggerSignIn = false, onSignInHandled }) => {
+  // Debug: log render
+  console.log("HeaderWidget rendered");
+
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
 
   // Open modal when triggerSignIn becomes true
   React.useEffect(() => {
@@ -43,10 +49,8 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
     }
   };
 
-  const handleSignOut = () => {
-    if (onSignOut) {
-      onSignOut();
-    }
+  const profileNav = () => {
+    setShowProfilePopup(!showProfilePopup);
   };
 
   return (
@@ -56,7 +60,7 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
         {/* Left: Logo */}
         <Link to="/">
           <div className="flex items-center">
-            <span className="text-3xl font-petit tracking-wider text-emerald-700">Scheduler</span>
+            <span className="text-3xl font-petit tracking-wider text-brand-green">Scheduler</span>
           </div>
         </Link>
 
@@ -64,17 +68,34 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
         <div className="hidden md:flex items-center gap-10 text-gray-700 font-medium">
           <NavItem label="New Appointment" path="/schedule" />
           <NavItem label="Calendar" path="/calendar" />
+          <NavItem label="Advocates" path="/advocates" />
         </div>
 
         {/* Right: Auth Actions */}
         <div className="flex items-center gap-6">
           {isSignedIn ? (
-            <button
-              onClick={handleSignOut}
-              className="text-emerald-700 font-medium hover:underline"
-            >
-              Sign out
-            </button>
+            <>
+              <button
+                onClick={profileNav}
+                className="flex items-center justify-center w-10 h-10 rounded-full transition"
+                aria-label="User profile"
+              >
+                <Avatar>
+                  <AvatarFallback>
+                    <FaUserCircle/>
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+              {showProfilePopup && onSignOut && (
+                <ProfilePopup
+                  handleSignout={() => {
+                    onSignOut();
+                    setShowProfilePopup(false);
+                  }}
+                  setShowProfilePopup={setShowProfilePopup}
+                />
+              )}
+            </>
           ) : (
             <>
               <button

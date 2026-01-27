@@ -25,7 +25,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { User } from './user.entity';
-
+import { Advocate } from './advocate.entity';
 /**
  * Appointment status enumeration
  * Defines different states an appointment can be in
@@ -81,6 +81,9 @@ export class Appointment {
 
     @ManyToOne(() => User, (user) => user.appointments, { onDelete: 'CASCADE' })
     user: User;
+
+    @ManyToOne(() => Advocate, advocate => advocate.appointments, { nullable: true })
+    advocate: Advocate;  
 
     /*
      * Instance Methods
