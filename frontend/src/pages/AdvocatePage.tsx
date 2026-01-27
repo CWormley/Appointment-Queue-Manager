@@ -10,15 +10,16 @@
  *
  */
 import React, { useEffect, useState } from 'react';
-import { advocateAPI } from '@/services/api';
-import {t,
+import { advocateAPI } from '../services/api';
+import {
+  Pagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "../components/ui/pagination";
 function AdvocatePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [advocates, setAdvocates] = useState<AdvocateItemProps[]>([]);
@@ -75,7 +76,8 @@ function AdvocatePage() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={e => {
+                  size="default"
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
                     if (page > 1) setPage(page - 1);
                   }}
@@ -87,7 +89,8 @@ function AdvocatePage() {
                 <PaginationItem>
                   <PaginationLink
                     href="#"
-                    onClick={e => {
+                    size="default"
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                       e.preventDefault();
                       setPage(page - 1);
                     }}
@@ -97,7 +100,7 @@ function AdvocatePage() {
                 </PaginationItem>
               )}
               <PaginationItem>
-                <PaginationLink href="#" isActive>
+                <PaginationLink href="#" isActive size="default">
                   {page.toString()}
                 </PaginationLink>
               </PaginationItem>
@@ -105,7 +108,8 @@ function AdvocatePage() {
                 <PaginationItem>
                   <PaginationLink
                     href="#"
-                    onClick={e => {
+                    size="default"
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                       e.preventDefault();
                       setPage(page + 1);
                     }}
@@ -122,7 +126,8 @@ function AdvocatePage() {
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={e => {
+                  size="default"
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
                     if (page < totalPages) setPage(page + 1);
                   }}
@@ -139,13 +144,13 @@ function AdvocatePage() {
 }
 
 interface AdvocateItemProps{
-    id: string;
-    name: string;
-    email: string;
-    phone?: string;
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
 }
 
-const AdvocateItem: React.FC<AdvocateItemProps> = ({ id, name, email, phone }) => {
+const AdvocateItem: React.FC<AdvocateItemProps> = ({ name, email, phone }) => {
     return (
         <div className="border-b border-gray-200 py-4">
             <h2 className="text-xl font-semibold text-gray-900">{name}</h2>
