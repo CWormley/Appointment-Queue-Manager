@@ -47,16 +47,15 @@ export class AdvocatesController {
      */ 
     @Get()
     async findAll(
-        @Query('page') page?: number,
-        @Query('limit') limit?: number
+        @Query('cursor') cursor?: string,
+        @Query('pageSize') pageSize?: string
     ): Promise<{
         data: Advocate[],
-        total: number,
-        page: number,
-        limit: number,
-        totalPages: number
+        totalCount: number,
+        pageSize: number,
+        next_cursor?: string
     }> {
-        return await this.advocatesService.findAll(page, limit);
+        return await this.advocatesService.findAll(cursor, pageSize);
     }
 
     /**

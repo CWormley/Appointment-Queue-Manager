@@ -24,6 +24,7 @@ function AdvocatePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [advocates, setAdvocates] = useState<AdvocateItemProps[]>([]);
     const [page, setPage] = useState<number>(1);
+    const [cursor, setCursor] = useState<string[]>(['']);
     const [totalPages, setTotalPages] = useState<number>(1);
     const pageSize = 5;
 
@@ -31,9 +32,12 @@ function AdvocatePage() {
         const fetchAdvocates = async () => {
             setLoading(true);
             try {
-                const data = await advocateAPI.getAll(page, pageSize);
+                const data = await advocateAPI.getAll(cursor[page-1], pageSize);
                 setAdvocates(data.data);
-                setTotalPages(data.totalPages);
+                setTotalPages(data.totalCount / data.pageSize);
+                if(cursor.length <= page){
+                  setCursor(prev => [...prev, data.next_cursor]);
+                }
             } catch (error) {
                 console.error("Error fetching advocates:", error);
             } finally {

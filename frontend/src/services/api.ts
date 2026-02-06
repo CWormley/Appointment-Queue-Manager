@@ -15,8 +15,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000
 
 // Advocate API
 export const advocateAPI = {
-  async getAll(page: number, pageSize: number) {
-    const response = await fetch(`${API_BASE_URL}/advocates?page=${page}&limit=${pageSize}`);
+  async getAll(cursor?: string, pageSize?: number) {
+    const params = new URLSearchParams();
+    if (cursor) params.append('cursor', cursor);
+    if (pageSize) params.append('pageSize', pageSize.toString());
+    const response = await fetch(`${API_BASE_URL}/advocates?${params.toString()}`);
     if (!response.ok) throw new Error('Failed to fetch advocates');
     return response.json();
   }

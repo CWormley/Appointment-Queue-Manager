@@ -10,13 +10,13 @@
  * @since 2026-01-25
  *
  */
-import { Injectable, NotFoundException, ConflictException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, OnModuleInit, Redirect } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Advocate } from '../../database/entities/advocate.entity';
 import { Appointment } from '../../database/entities/appointment.entity';
 import { CreateAdvocateDTO, UpdateAdvocateDTO } from './dtos';
-
+import { redis } from 'src/redis';  
 @Injectable()
 export class AdvocatesService implements OnModuleInit {
     constructor(
@@ -50,36 +50,55 @@ export class AdvocatesService implements OnModuleInit {
             throw new ConflictException(`Advocate with email ${createAdvocateDTO.email} already exists`);
         }
         const advocate = this.advocatesRepository.create(createAdvocateDTO);
+        await redis.del("advocates:count:all");
         return await this.advocatesRepository.save(advocate);
     }
 
-    
     /**
      * Get all advocates with pagination info
+     * pagination with cursor
+     * NOTE: I've decided to use cursor instead of offest for improved scalability
      */
-    async findAll(page?: number, limit?: number): Promise<{
+    async findAll(cursor?: string, pageSize?: string): Promise<{
         data: Advocate[],
-        total: number,
-        page: number,
-        limit: number,
-        totalPages: number
+        totalCount: number,
+        pageSize: number,
+        next_cursor?: string
     }> {
         // Default to page 1 if not provided, and limit to total if not provided
-        const safePage = page && page > 0 ? page : 1;
-        const [data, total] = await this.advocatesRepository.findAndCount({
-            relations: ['appointments'],
-            skip: limit ? (safePage - 1) * limit : undefined,
-            take: limit || undefined,
-        });
-        const safeLimit = limit || total || 1;
-        const totalPages = limit ? Math.max(1, Math.ceil(total / safeLimit)) : 1;
-        return {
-            data,
-            total,
-            page: safePage,
-            limit: safeLimit,
-            totalPages,
-        };
+        const cachedTotal = await redis.get("advocates:count:all");
+        const safePageSize = Number(pageSize) || 10;
+        const qb = this.advocatesRepository.createQueryBuilder('advocate')
+                    .leftJoinAndSelect('advocate.appointments', 'appointment')
+                    .orderBy('advocate.id', 'ASC')
+                    .take(safePageSize + 1)
+        if(cursor){
+            const cursorAdvocate = await this.advocatesRepository.findOne({
+                where: { id: cursor },
+            });
+            if(!cursorAdvocate){
+                throw new NotFoundException(`Advocate with ID ${cursor} not found`);
+            }   
+            qb.where('advocate.id > :cursorId', { cursorId: cursorAdvocate.id })
+        }
+        if(!cachedTotal){
+                const [data, total] = await qb.getManyAndCount();
+                //data fetched is one more than requested to obtain next_cursor, data returns data subset
+                await redis.set("advocates:count:all", total.toString(), { EX: 60 })
+                return{
+                    data: data.slice(0, safePageSize),
+                    totalCount: total,
+                    pageSize : safePageSize,
+                    next_cursor: data.length > safePageSize ? data[data.length -1].id : undefined
+                }
+        }
+        const data = await qb.getMany();
+        return{
+            data: data.slice(0, safePageSize),
+            totalCount: Number(cachedTotal),
+            pageSize : safePageSize,
+            next_cursor: data.length > safePageSize ? data[data.length -1].id : undefined
+        }
     }   
 
     /**
@@ -125,6 +144,7 @@ export class AdvocatesService implements OnModuleInit {
             }
         }
         Object.assign(advocate, updateAdvocateDTO);
+        await redis.del("advocates:count:all");
         return await this.advocatesRepository.save(advocate);
     }
 
@@ -134,6 +154,7 @@ export class AdvocatesService implements OnModuleInit {
      */
     async delete(id: string): Promise<void> {
         const advocate = await this.findById(id);
+        await redis.del("advocates:count:all");
         await this.advocatesRepository.remove(advocate);
     }   
 }

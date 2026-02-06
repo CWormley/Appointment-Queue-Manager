@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
+import {redis} from './redis';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  await redis.connect();
 
   // Enable CORS
   app.enableCors({
