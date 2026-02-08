@@ -48,7 +48,9 @@ function AdvocatePage() {
     }, [page]);
 
     return (
-    <div className="w-full min-h-screen bg-gray-50 py-12 px-4">
+    <div className="relative z-10 flex flex-col min-h-screen bg-white my-10 p-10 rounded-2xl w-full min-w-[32rem] max-w-4xl mx-auto">
+      <div className="w-full min-h-screen">
+
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -143,6 +145,7 @@ function AdvocatePage() {
           </Pagination>
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -156,10 +159,15 @@ interface AdvocateItemProps{
 
 const AdvocateItem: React.FC<AdvocateItemProps> = ({ name, email, phone }) => {
     return (
-        <div className="border-b border-gray-200 py-4">
+        <div className="border-b border-gray-200 py-4 grind-cols-2">
+          <div className='col-span-1'>
             <h2 className="text-xl font-semibold text-gray-900">{name}</h2>
             <p className="text-gray-600">Email: {email}</p>
             {phone && <p className="text-gray-600">Phone: {phone}</p>}
+          </div>
+            <button className='bg-slate-100 border border-gray-50 col-span-2'>
+              Book With Advocate
+            </button>
         </div>
     );
 }

@@ -56,18 +56,7 @@ function Dashboard({ userName, userId }: DashboardProps) {
   });
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
-      {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-20 text-center bg-gradient-to-b from-emerald-50 to-gray-50">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          Appointment & Queue Manager
-        </h1>
-        <p className="text-xl text-gray-600 mb-12 max-w-2xl">
-          Streamline your scheduling with our intuitive appointment management
-          system. Save time, reduce no-shows, and keep your clients happy.
-        </p>
-      </section>
-
+    <div className="relative z-10 flex flex-col bg-brand-white rounded-2xl mx-4 pt-6 px-6 pb-10 mb-20">
       {error && <p className="text-red-600 mb-4">{error}</p>}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-0">
         {userName ? (
@@ -82,17 +71,17 @@ function Dashboard({ userName, userId }: DashboardProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Link
           to="/schedule"
           className="group flex items-center justify-between rounded-2xl border border-slate-300 bg-white px-8 py-6 transition hover:border-slate-400"
         >
           <h2 className="font-serifDisplay text-2xl text-slate-900">
             Schedule{" "}
-            <span className="text-emerald-700 font-medium">appointment</span>
+            <span className="text-brand-green font-medium">appointment</span>
           </h2>
 
-          <span className="text-emerald-700 text-xl transition group-hover:translate-x-1">
+          <span className="text-brand-green text-xl transition group-hover:translate-x-1">
             →
           </span>
         </Link>
@@ -102,10 +91,10 @@ function Dashboard({ userName, userId }: DashboardProps) {
           className="group flex items-center justify-between rounded-2xl border border-slate-300 bg-white px-8 py-6 transition hover:border-slate-400"
         >
           <h2 className="font-serifDisplay text-2xl text-slate-900">
-            View <span className="text-amber-600 font-medium">calendar</span>
+            View <span className="text-brand-gold font-medium">calendar</span>
           </h2>
 
-          <span className="text-emerald-700 text-xl transition group-hover:translate-x-1">
+          <span className="text-brand-gold text-xl transition group-hover:translate-x-1">
             →
           </span>
         </Link>
@@ -115,10 +104,10 @@ function Dashboard({ userName, userId }: DashboardProps) {
         >
           <h2 className="font-serifDisplay text-2xl text-slate-900">
             Find{" "}
-            <span className="text-amber-600 font-medium">advocates</span>
+            <span className="text-brand-green font-medium">advocates</span>
           </h2>
 
-          <span className="text-emerald-700 text-xl transition group-hover:translate-x-1">
+          <span className="text-brand-green text-xl transition group-hover:translate-x-1">
             →
           </span>
         </Link>

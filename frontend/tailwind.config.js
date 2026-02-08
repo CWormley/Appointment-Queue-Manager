@@ -63,7 +63,12 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			'brand-green': '#27ae60', // custom green color
+  			'brand-green': '#34614e',
+			'brand-green-light': '#3b6e58',
+			'brand-green-dark': '#1d4031',
+			'brand-gold': '#edb361',
+			'brand-gold-light': '#ebc48d',
+			'brand-white': '#edeae8',
   		}
   	}
   },

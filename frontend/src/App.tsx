@@ -54,9 +54,11 @@ function App() {
 
   return (
     <Router>
-      <div className="w-full h-screen flex flex-col">
-        <div className="w-full h-10 bg-green-900"></div>
-        <HeaderWidget 
+    <div className="w-full h-screen flex flex-col">
+      <div className="absolute inset-0 bg-[url('./brand-bg-texture.avif')] bg-no-repeat bg-cover bg-fixed">
+          <div className="absolute inset-0 bg-gradient-to-l from-brand-green-light to-brand-green-dark opacity-75" />
+      </div>
+      <HeaderWidget 
           isSignedIn={isSignedIn} 
           onSignIn={handleSignIn}
           onSignOut={handleSignOut}

@@ -141,7 +141,7 @@ function ViewCalendarPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 py-12 px-4">
+    <div className="relative z-10 flex flex-col min-h bg-white my-10 p-10 rounded-2xl w-full min-w-[32rem] max-w-4xl mx-auto">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">

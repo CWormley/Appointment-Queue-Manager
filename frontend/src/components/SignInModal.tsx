@@ -66,7 +66,7 @@ function SignInModal({ onSignIn, onClose }: SignInModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-      <div className="bg-white rounded-lg p-8 w-96 shadow-lg relative z-[10000]">
+      <div className="bg-brand-white rounded-lg p-8 w-96 shadow-lg relative z-[10000]">
         <h2 className="text-2xl font-bold mb-6">{isSignUp ? "Create Account" : "Sign In"}</h2>
         {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
         <form onSubmit={handleSubmit}>

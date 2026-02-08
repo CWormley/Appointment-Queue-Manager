@@ -54,13 +54,17 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
   };
 
   return (
-    <header className="w-full flex justify-center px-6 py-4 bg-gray-50">
-      <nav className="w-full max-w-4xl flex items-center justify-between bg-white rounded-2xl shadow-md px-8 py-4">
+    <header className="relative w-full flex justify-center">
+      <div className="absolute inset-0 bg-[url('./brand-bg-texture.avif')] bg-no-repeat bg-cover bg-fixed">
+          <div className="absolute inset-0 bg-gradient-to-l from-brand-green-light to-brand-green-dark opacity-75" />
+      </div>
+
+      <nav className="relative w-full flex items-center justify-between bg-transparent bg-brand-white rounded-b-3xl shadow-md px-40 py-4 z-20">
         
         {/* Left: Logo */}
         <Link to="/">
           <div className="flex items-center">
-            <span className="text-3xl font-petit tracking-wider text-brand-green">Scheduler</span>
+            <span className="text-4xl font-petit tracking-wider text-brand-green">Scheduler</span>
           </div>
         </Link>
 
@@ -102,14 +106,14 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
                 onClick={() => setShowSignInModal(true)}
                 className="text-emerald-700 font-medium hover:underline flex items-center gap-1"
               >
-                Sign in <span aria-hidden>→</span>
+                Sign in
               </button>
 
               <button
                 onClick={() => setShowSignInModal(true)}
-                className="bg-emerald-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-emerald-700 transition"
+                className="bg-gradient-to-br hover:bg-gradient-to-tl from-brand-gold-light to-brand-gold text-black px-6 py-3 rounded-xl font-semibold hover:bg-emerald-700 transition"
               >
-                Get Started
+                Get Started <span aria-hidden>→</span>
               </button>
             </>
           )}
@@ -134,7 +138,7 @@ const NavItem: React.FC<NavItemProps> = ({ label, path }) => {
   return (
     <button 
       onClick={() => navigate(path)}
-      className="flex items-center gap-1 hover:text-emerald-700 transition bg-white cursor-pointer font-extralight"
+      className="flex items-center gap-1 hover:text-emerald-700 transition bg-brand-white cursor-pointer font-extralight"
     >
       <span>{label}</span>
     </button>
