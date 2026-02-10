@@ -66,8 +66,8 @@ function SignInModal({ onSignIn, onClose }: SignInModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-      <div className="bg-brand-white rounded-lg p-8 w-96 shadow-lg relative z-[10000]">
-        <h2 className="text-2xl font-bold mb-6">{isSignUp ? "Create Account" : "Sign In"}</h2>
+      <div className="bg-white rounded-lg p-8 w-96 shadow-lg relative z-[10000]">
+        <h2 className="text-2xl font-bold mb-6 text-brand-green-dark">{isSignUp ? "Create Account" : "Sign In"}</h2>
         {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
         <form onSubmit={handleSubmit}>
           {isSignUp && (
@@ -97,7 +97,7 @@ function SignInModal({ onSignIn, onClose }: SignInModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50"
+            className="w-full bg-brand-green-dark text-white py-2 rounded-lg hover:bg-brand-green-light transition font-semibold disabled:opacity-50"
           >
             {loading ? (isSignUp ? "Creating Account..." : "Signing In...") : (isSignUp ? "Create Account" : "Sign In")}
           </button>
@@ -112,7 +112,7 @@ function SignInModal({ onSignIn, onClose }: SignInModalProps) {
                 setEmail("");
                 setName("");
               }}
-              className="text-blue-600 hover:text-blue-700 font-semibold"
+              className="text-brand-gold hover:text-brand-gold-light hover:bg-transparent hover:underline font-semibold"
             >
               {isSignUp ? "Sign In" : "Sign Up"}
             </button>

@@ -59,8 +59,8 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
           <div className="absolute inset-0 bg-gradient-to-l from-brand-green-light to-brand-green-dark opacity-75" />
       </div>
 
-      <nav className="relative w-full flex items-center justify-between bg-transparent bg-brand-white rounded-b-3xl shadow-md px-40 py-4 z-20">
-        
+      <nav className="relative w-full bg-white rounded-b-3xl shadow-md z-20">
+        <div className="mx-auto max-w-screen-2xl px-8 xl:px-40 py-4 flex items-center justify-between">
         {/* Left: Logo */}
         <Link to="/">
           <div className="flex items-center">
@@ -76,7 +76,7 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
         </div>
 
         {/* Right: Auth Actions */}
-        <div className="flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6">
           {isSignedIn ? (
             <>
               <button
@@ -119,9 +119,16 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
           )}
         </div>
 
+        {/* Mobile-Right: More Menu */}
+        <div className="flex md:hidden">
+          
+
+        </div>
+
         {showSignInModal && (
           <SignInModal onSignIn={handleSignIn} onClose={() => setShowSignInModal(false)} />
         )}
+      </div>
       </nav>
     </header>
   );
@@ -138,7 +145,7 @@ const NavItem: React.FC<NavItemProps> = ({ label, path }) => {
   return (
     <button 
       onClick={() => navigate(path)}
-      className="flex items-center gap-1 hover:text-emerald-700 transition bg-brand-white cursor-pointer font-extralight"
+      className="flex items-center gap-1 hover:text-emerald-700 transition bg-white cursor-pointer font-extralight"
     >
       <span>{label}</span>
     </button>
