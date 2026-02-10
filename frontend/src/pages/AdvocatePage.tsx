@@ -11,6 +11,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { advocateAPI } from '../services/api';
+import { Input } from "@/components/ui/input"
 import {
   Pagination,
   PaginationContent,
@@ -20,24 +21,34 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../components/ui/pagination";
+
 function AdvocatePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [advocates, setAdvocates] = useState<AdvocateItemProps[]>([]);
     const [page, setPage] = useState<number>(1);
     const [cursor, setCursor] = useState<string[]>(['']);
-    const [totalPages, setTotalPages] = useState<number>(1);
-    const pageSize = 5;
+    const [search, setSearch] = useState("");
+    const pageSize = 2;
+
+    useEffect(() =>{
+      setCursor(['']);
+      setPage(1);
+    }, [search]);
 
     useEffect(() => {
         const fetchAdvocates = async () => {
             setLoading(true);
             try {
-                const data = await advocateAPI.getAll(cursor[page-1], pageSize);
+                const data = await advocateAPI.getAll(cursor[page-1], pageSize, search);
                 setAdvocates(data.data);
-                setTotalPages(data.totalCount / data.pageSize);
-                if(cursor.length <= page){
-                  setCursor(prev => [...prev, data.next_cursor]);
-                }
+                const next_cursor = data.next_cursor ? data.next_cursor : '';
+                // Only add next_cursor if it's different from the last one
+                setCursor(prev => {
+                  if (prev.length <= page && prev[prev.length - 1] !== next_cursor) {
+                    return [...prev, next_cursor];
+                  }
+                  return prev;
+                });
             } catch (error) {
                 console.error("Error fetching advocates:", error);
             } finally {
@@ -45,7 +56,7 @@ function AdvocatePage() {
             }
         }
         fetchAdvocates();
-    }, [page]);
+    }, [page, search]);
 
     return (
     <div className="relative z-10 flex flex-col min-h-screen bg-white my-10 p-10 rounded-2xl w-full min-w-[32rem] max-w-4xl mx-auto">
@@ -56,6 +67,9 @@ function AdvocatePage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Find an Advocate</h1>
           <p className="text-gray-600">Discover what our advocates can do for you</p>
+        </div>
+        <div className='mb-6'>
+          <Input placeholder="Search Advocates" value={search} onChange={(e : React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}/>
         </div>
         {/* Advocate List Placeholder */}
         <div className="bg-white shadow-md rounded-lg p-6">
@@ -75,7 +89,7 @@ function AdvocatePage() {
         </div>
       </div>
       {/* Only show pagination if there are more than, e.g., 10 advocates */}
-      {totalPages > 1 && (
+      {cursor[1] != '' && (
         <div className="flex justify-center mt-8">
           <Pagination>
             <PaginationContent>
@@ -91,6 +105,25 @@ function AdvocatePage() {
                   className={page === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
+              {page - 1 > 1 && (
+                <div className="flex">
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    size="default"
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                      e.preventDefault();
+                      setPage(1);
+                    }}
+                  >
+                    {1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                </div>
+              )}
               {page > 1 && (
                 <PaginationItem>
                   <PaginationLink
@@ -110,7 +143,7 @@ function AdvocatePage() {
                   {page.toString()}
                 </PaginationLink>
               </PaginationItem>
-              {page < totalPages && (
+              {cursor[page] != '' && (
                 <PaginationItem>
                   <PaginationLink
                     href="#"
@@ -124,21 +157,16 @@ function AdvocatePage() {
                   </PaginationLink>
                 </PaginationItem>
               )}
-              {page < totalPages - 1 && (
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              )}
               <PaginationItem>
                 <PaginationNext
                   href="#"
                   size="default"
                   onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
-                    if (page < totalPages) setPage(page + 1);
+                    if (cursor[page] != '') setPage(page + 1);
                   }}
-                  aria-disabled={page === totalPages}
-                  className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                  aria-disabled={cursor[page] == ''}
+                  className={cursor[page] == '' ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
             </PaginationContent>

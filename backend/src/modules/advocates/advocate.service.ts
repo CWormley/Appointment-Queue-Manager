@@ -59,14 +59,12 @@ export class AdvocatesService implements OnModuleInit {
      * pagination with cursor
      * NOTE: I've decided to use cursor instead of offest for improved scalability
      */
-    async findAll(cursor?: string, pageSize?: string): Promise<{
+    async findAll(cursor?: string, pageSize?: string, search?: string,): Promise<{
         data: Advocate[],
-        totalCount: number,
         pageSize: number,
         next_cursor?: string
     }> {
         // Default to page 1 if not provided, and limit to total if not provided
-        const cachedTotal = await redis.get("advocates:count:all");
         const safePageSize = Number(pageSize) || 10;
         const qb = this.advocatesRepository.createQueryBuilder('advocate')
                     .leftJoinAndSelect('advocate.appointments', 'appointment')
@@ -79,15 +77,13 @@ export class AdvocatesService implements OnModuleInit {
             if(!cursorAdvocate){
                 throw new NotFoundException(`Advocate with ID ${cursor} not found`);
             }   
-            qb.where('advocate.id > :cursorId', { cursorId: cursorAdvocate.id })
+            qb.where('advocate.id >= :cursorId', { cursorId: cursorAdvocate.id })
         }
-        if(!cachedTotal){
-                const [data, total] = await qb.getManyAndCount();
-                //data fetched is one more than requested to obtain next_cursor, data returns data subset
-                await redis.set("advocates:count:all", total.toString(), { EX: 60 })
-                return{
+        if(search){
+            qb.andWhere('(advocate.name ILIKE :search OR advocate.email ILIKE :search)', {search: `%${search}%`}) 
+            const [data] = await qb.getManyAndCount();
+            return{
                     data: data.slice(0, safePageSize),
-                    totalCount: total,
                     pageSize : safePageSize,
                     next_cursor: data.length > safePageSize ? data[data.length -1].id : undefined
                 }
@@ -95,7 +91,6 @@ export class AdvocatesService implements OnModuleInit {
         const data = await qb.getMany();
         return{
             data: data.slice(0, safePageSize),
-            totalCount: Number(cachedTotal),
             pageSize : safePageSize,
             next_cursor: data.length > safePageSize ? data[data.length -1].id : undefined
         }
@@ -115,19 +110,7 @@ export class AdvocatesService implements OnModuleInit {
         }
         return advocate;
     }
-
-    async searchByString(query: string, page?: number, limit?: number): Promise<Advocate[]> {
-        const skip = page && limit ? (page - 1) * limit : undefined;
-        const take = limit || undefined;
-        return await this.advocatesRepository
-            .createQueryBuilder('advocate')
-            .where('advocate.name ILIKE :query OR advocate.email ILIKE :query', { query: `%${query}%` })
-            .leftJoinAndSelect('advocate.appointments', 'appointment')
-            .skip(skip)
-            .take(take)
-            .getMany();
-    }
-
+  
     /**
      * Update advocate by ID
      * @throws NotFoundException if advocate not found

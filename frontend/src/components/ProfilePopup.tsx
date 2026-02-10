@@ -21,7 +21,7 @@ function ProfilePopup ({handleSignout, setShowProfilePopup}: ProfilePopupProps) 
     const email = localStorage.getItem("userEmail") || "";
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-            <Card className="w-full max-w-sm bg-brand-white rounded-lg shadow-lg">
+            <Card className="w-full max-w-sm bg-white rounded-lg shadow-lg">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>User Profile</CardTitle>
                     <button

@@ -48,14 +48,16 @@ export class AdvocatesController {
     @Get()
     async findAll(
         @Query('cursor') cursor?: string,
-        @Query('pageSize') pageSize?: string
+        @Query('pageSize') pageSize?: string,
+        @Query('search') search?: string
+
     ): Promise<{
         data: Advocate[],
-        totalCount: number,
         pageSize: number,
         next_cursor?: string
     }> {
-        return await this.advocatesService.findAll(cursor, pageSize);
+        console.log("recieved params",cursor, " ", pageSize, " ", search)
+        return await this.advocatesService.findAll(cursor, pageSize, search);
     }
 
     /**
@@ -66,15 +68,6 @@ export class AdvocatesController {
     async findById(@Param('id') id: string):Promise<Advocate>{
         return await this.advocatesService.findById(id);
     }      
-    
-    @Get('search/:query')
-    async searchByString(
-        @Param('query') query: string,
-        @Query('page') page?: number,
-        @Query('limit') limit?: number
-    ): Promise<Advocate[]> {
-        return await this.advocatesService.searchByString(query, page, limit);
-    }
 
     /**
      * PATCH /advocates/:id
