@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FaUserCircle } from "react-icons/fa";
 import SignInModal from "./SignInModal";
 import ProfilePopup from "./ProfilePopup";
+
 interface HeaderWidgetProps {
   isSignedIn?: boolean;
   onSignIn?: (email: string, id: string, name?: string) => void;
@@ -31,6 +32,7 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
 
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Open modal when triggerSignIn becomes true
   React.useEffect(() => {
@@ -121,9 +123,56 @@ const HeaderWidget: React.FC<HeaderWidgetProps> = ({ isSignedIn = false, onSignI
 
         {/* Mobile-Right: More Menu */}
         <div className="flex md:hidden">
-          
-
+          <button onClick={()=> setShowMobileMenu(!showMobileMenu)} className="text-gray-700 text-xl focus:outline-none">
+            ...
+          </button>
         </div>
+        
+          {/* Mobile Menu */}
+          {showMobileMenu && (
+            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+              <div className="absolute top-0 right-0">
+              {isSignedIn ? (
+                <>
+                  <button
+                    onClick={profileNav}
+                    className="w-full text-left hover:bg-gray-100"
+                  >
+                    <Avatar>
+                  <AvatarFallback>
+                    <FaUserCircle/>
+                  </AvatarFallback>
+                </Avatar>
+                  </button>
+                  {showProfilePopup && onSignOut && (
+                    <ProfilePopup
+                      handleSignout={() => {
+                        onSignOut();
+                        setShowProfilePopup(false);
+                      }}
+                      setShowProfilePopup={setShowProfilePopup}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowSignInModal(true)}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                  >
+                    Sign in
+                  </button>
+                </>
+              )}
+              </div>
+              <div className="mt-4 mb-2">
+              <NavItem label="Calendar" path="/calendar" />
+              <NavItem label="New Appointment" path="/schedule" />
+              <NavItem label="Advocates" path="/advocates" />
+              </div>
+            </div>
+          )}
+
 
         {showSignInModal && (
           <SignInModal onSignIn={handleSignIn} onClose={() => setShowSignInModal(false)} />
