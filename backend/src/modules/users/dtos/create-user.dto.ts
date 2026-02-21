@@ -20,8 +20,4 @@ export class CreateUserDTO {
   @IsString()
   @IsNotEmpty({ message: 'Name is required' })
   name: string;
-
-  @IsEnum(UserRole)
-  @IsOptional()
-  role?: UserRole = UserRole.USER;
 }

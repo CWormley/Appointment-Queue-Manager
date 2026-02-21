@@ -71,12 +71,6 @@ export const appointmentAPI = {
     return response.json();
   },
 
-  async getAll() {
-    const response = await fetch(`${API_BASE_URL}/appointments`);
-    if (!response.ok) throw new Error('Failed to fetch appointments');
-    return response.json();
-  },
-
   async getAvailableSlots(date: string) {
     const response = await fetch(`${API_BASE_URL}/appointments/available-time-slots?date=${date}`);
     if (!response.ok) throw new Error('Failed to fetch available slots');

@@ -41,32 +41,6 @@ export class AppointmentsController {
     return await this.appointmentsService.create(createAppointmentDTO);
   }
 
-  /**
-   * GET /appointments
-   * Get all appointments or filter by date
-   * Query: ?date=2026-01-15
-   */
-  @Get()
-  async findAll(@Query('date') date?: string): Promise<Appointment[]> {
-    if (date) {
-      return await this.appointmentsService.findByDate(date);
-    }
-    return await this.appointmentsService.findAll();
-  }
-
-  /**
-   * GET /appointments/load
-   * Get appointment load by date range (admin)
-   * Query: ?startDate=2026-01-01&endDate=2026-01-31
-   */
-  @Get('admin/load')
-  async getLoadByDate(
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
-  ) {
-    return await this.appointmentsService.getLoadByDate(startDate, endDate);
-  }
-
   @Get('available-time-slots')
   async getAvailableTimeSlots(@Query('date') date: string) {
     return await this.appointmentsService.getAvailableTimeSlots(date);
@@ -101,16 +75,7 @@ export class AppointmentsController {
   ): Promise<Appointment> {
     return await this.appointmentsService.update(id, updateAppointmentDTO);
   }
-
-  /**
-   * PATCH /appointments/:id/complete
-   * Mark appointment as completed (admin)
-   */
-  @Patch(':id/complete')
-  async markAsCompleted(@Param('id') id: string): Promise<Appointment> {
-    return await this.appointmentsService.markAsCompleted(id);
-  }
-
+  
   /**
    * PATCH /appointments/:id/cancel
    * Cancel appointment
