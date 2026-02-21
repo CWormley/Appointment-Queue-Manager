@@ -1,0 +1,1 @@
+export {AuthorizeAdminDTO} from './authorize-admin.dto';
