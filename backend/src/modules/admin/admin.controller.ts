@@ -30,7 +30,6 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { UserRole } from 'src/database/entities/user.entity';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { App } from 'supertest/types';
 import { Appointment } from 'src/database/entities/appointment.entity';
 
 @Controller('admin')

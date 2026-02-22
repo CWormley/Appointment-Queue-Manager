@@ -11,7 +11,7 @@
  * @since 2026-02-20
  *
  */
-import { Injectable, NotFoundException, ConflictException, OnModuleInit, Redirect } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Advocate } from '../../database/entities/advocate.entity';
