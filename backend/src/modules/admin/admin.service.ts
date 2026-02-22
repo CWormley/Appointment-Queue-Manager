@@ -71,10 +71,10 @@ export class AdminService {
             .leftJoinAndSelect('appointment.user', 'user');
 
         if (date) {
-            query.andWhere('DATE(appointment.scheduled_time) = :date', { date });
+            query.andWhere('DATE(appointment.date) = :date', { date });
         }
         if (future) {
-            query.andWhere('appointment.scheduled_time > NOW()');
+            query.andWhere('appointment.date > NOW()');
         }
         return await query.getMany();
     }
